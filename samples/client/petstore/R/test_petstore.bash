@@ -5,6 +5,8 @@ set -e
 REPO=http://cran.revolutionanalytics.com
 
 export R_LIBS_USER=$HOME/R
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 echo "R lib directory: $R_LIBS_USER"
 
