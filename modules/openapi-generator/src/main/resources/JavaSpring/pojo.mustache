@@ -8,7 +8,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}}{{/parent}}{{^parent}}
   private static final long serialVersionUID = 1L;
 
 {{/serializableModel}}
-  {{#vars}}
+  {{#nonDiscriminatorVars}}
     {{#isEnum}}
     {{^isContainer}}
 {{>enumClass}}
@@ -34,8 +34,8 @@ public class {{classname}} {{#parent}}extends {{{parent}}}{{/parent}}{{^parent}}
   private {{>nullableDataType}} {{name}}{{#isNullable}} = JsonNullable.undefined(){{/isNullable}}{{^isNullable}}{{#defaultValue}} = {{{.}}}{{/defaultValue}}{{/isNullable}};
   {{/isContainer}}
 
-  {{/vars}}
-  {{#vars}}
+  {{/nonDiscriminatorVars}}
+  {{#nonDiscriminatorVars}}
   public {{classname}} {{name}}({{{datatypeWithEnum}}} {{name}}) {
     this.{{name}} = {{#isNullable}}JsonNullable.of({{name}}){{/isNullable}}{{^isNullable}}{{name}}{{/isNullable}};
     return this;
@@ -92,7 +92,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}}{{/parent}}{{^parent}}
     this.{{name}} = {{name}};
   }
 
-  {{/vars}}
+  {{/nonDiscriminatorVars}}
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -101,17 +101,17 @@ public class {{classname}} {{#parent}}extends {{{parent}}}{{/parent}}{{^parent}}
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }{{#hasVars}}
+    }{{#hasNonDiscriminatorVars}}
     {{classname}} {{classVarName}} = ({{classname}}) o;
-    return {{#vars}}Objects.equals(this.{{name}}, {{classVarName}}.{{name}}){{#hasMore}} &&
-        {{/hasMore}}{{/vars}}{{#parent}} &&
-        super.equals(o){{/parent}};{{/hasVars}}{{^hasVars}}
-    return true;{{/hasVars}}
+    return {{#nonDiscriminatorVars}}Objects.equals(this.{{name}}, {{classVarName}}.{{name}}){{#hasMore}} &&
+        {{/hasMore}}{{/nonDiscriminatorVars}}{{#parent}} &&
+        super.equals(o){{/parent}};{{/hasNonDiscriminatorVars}}{{^hasNonDiscriminatorVars}}
+    return true;{{/hasNonDiscriminatorVars}}
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash({{#vars}}{{name}}{{#hasMore}}, {{/hasMore}}{{/vars}}{{#parent}}{{#hasVars}}, {{/hasVars}}super.hashCode(){{/parent}});
+    return Objects.hash({{#nonDiscriminatorVars}}{{name}}{{#hasMore}}, {{/hasMore}}{{/nonDiscriminatorVars}}{{#parent}}{{#hasNonDiscriminatorVars}}, {{/hasNonDiscriminatorVars}}super.hashCode(){{/parent}});
   }
 
   @Override
@@ -119,8 +119,8 @@ public class {{classname}} {{#parent}}extends {{{parent}}}{{/parent}}{{^parent}}
     StringBuilder sb = new StringBuilder();
     sb.append("class {{classname}} {\n");
     {{#parent}}sb.append("    ").append(toIndentedString(super.toString())).append("\n");{{/parent}}
-    {{#vars}}sb.append("    {{name}}: ").append(toIndentedString({{name}})).append("\n");
-    {{/vars}}sb.append("}");
+    {{#nonDiscriminatorVars}}sb.append("    {{name}}: ").append(toIndentedString({{name}})).append("\n");
+    {{/nonDiscriminatorVars}}sb.append("}");
     return sb.toString();
   }
 

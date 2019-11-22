@@ -54,6 +54,7 @@ public class CodegenModel {
     public List<CodegenProperty> readOnlyVars = new ArrayList<CodegenProperty>(); // a list of read-only properties
     public List<CodegenProperty> readWriteVars = new ArrayList<CodegenProperty>(); // a list of properties for read, write
     public List<CodegenProperty> parentVars = new ArrayList<CodegenProperty>();
+    public List<CodegenProperty> nonDiscriminatorVars = new ArrayList<CodegenProperty>(); // properties other than the discriminator (without parent's properties)
     public Map<String, Object> allowableValues;
 
     // Sorted sets of required parameters.
@@ -61,7 +62,8 @@ public class CodegenModel {
     public Set<String> allMandatory = new TreeSet<String>(); // with parent's required properties
 
     public Set<String> imports = new TreeSet<String>();
-    public boolean hasVars, emptyVars, hasMoreModels, hasEnums, isEnum, isNullable, hasRequired, hasOptional, isArrayModel, hasChildren, isMapModel;
+    public boolean hasVars, emptyVars, hasMoreModels, hasEnums, isEnum, isNullable, hasRequired, hasOptional,
+            isArrayModel, hasChildren, isMapModel, hasNonDiscriminatorVars;
     public boolean hasOnlyReadOnly = true; // true if all properties are read-only
     public ExternalDocumentation externalDocumentation;
 
@@ -582,6 +584,18 @@ public class CodegenModel {
                 }
             }
         }
+    }
+
+    /**
+     * Copy vars to nonDiscriminatorVars, except the discriminator
+     */
+    public void populateNonDiscriminatorVars() {
+        for (CodegenProperty var : vars) {
+            if (!var.name.equals(getDiscriminatorName())) {
+                nonDiscriminatorVars.add(var);
+            }
+        }
+        hasNonDiscriminatorVars = !nonDiscriminatorVars.isEmpty();
     }
 
     /**
