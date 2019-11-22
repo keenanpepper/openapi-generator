@@ -2002,6 +2002,8 @@ public class DefaultCodegen implements CodegenConfig {
         // remove duplicated properties
         m.removeAllDuplicatedProperty();
 
+        m.populateNonDiscriminatorVars();
+
         // post process model properties
         if (m.vars != null) {
             for (CodegenProperty prop : m.vars) {
